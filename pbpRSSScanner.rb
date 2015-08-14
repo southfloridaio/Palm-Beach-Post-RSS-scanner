@@ -7,7 +7,7 @@
 
 rssArray = [
 	'http://scpbc.blog.palmbeachpost.com/feed/',
-	'http://clikhear.palmbeachpost.com/feed/',
+	# 'http://clikhear.palmbeachpost.com/feed/',
 	'http://crime.blog.palmbeachpost.com/feed/',
 	'http://dailydolphin.blog.palmbeachpost.com/feed/',
 	'http://eyeonthestorm.blog.palmbeachpost.com/feed/',
@@ -30,18 +30,22 @@ rssArray = [
 	'http://wpbc.blog.palmbeachpost.com/feed/'
 ]
 
-rssArray.each{|rssURL|
-	page = Nokogiri::XML(open(rssURL))
-	items = page.css('item')
-	items.each{|item|
-		title = item.css('title').text
-		link = item.css('link').text
-		description = item.css('description').text
-		p [
-			title,
-			link,
-			description
-		],
-		'==='
+File.open("PBPostRSS.txt", "w"){|file|  
+	rssArray.each{|rssURL|
+		page = Nokogiri::XML(open(rssURL))
+		items = page.css('item')
+		items.each{|item|
+			title = item.css('title').text
+			link = item.css('link').text
+			description = item.css('description').text
+			arr = [
+				Date.today.to_s,
+				title,
+				link,
+				Nokogiri::HTML(description).text.gsub("\n",' ')
+			]
+			file.puts(arr.join("\t"))
+			p arr
+		}
 	}
 }
